@@ -46,4 +46,20 @@ class DateTests {
         }
         assertEquals("Illegal month 0",ex.message)
     }
+    @Test
+    fun `add days to a date`() {
+        val sut = Date(2024,9,19) + 1
+        assertEquals(20,sut.day)
+        assertEquals(9, sut.month)
+        assertEquals(2024,sut.year)
+        val sut2 = Date(2024,9,30) +1
+        assertEquals(1,sut2.day)
+        assertEquals(10, sut2.month)
+        assertEquals(2024,sut2.year)
+        val sut3 = Date(2024,12,31) +1
+        assertEquals(1,sut3.day)
+        assertEquals(1, sut3.month)
+        assertEquals(2025,sut3.year)
+
+    }
 }
