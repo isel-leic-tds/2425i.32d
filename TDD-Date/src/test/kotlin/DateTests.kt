@@ -60,6 +60,33 @@ class DateTests {
         assertEquals(1,sut3.day)
         assertEquals(1, sut3.month)
         assertEquals(2025,sut3.year)
-
+    }
+    @Test
+    fun `verify equality in two dates`() {
+        val sut1 = Date(2024,9,20)
+        val sut2 = Date(2024,9,20)
+        println(sut1.hashCode())
+        println(sut2.hashCode())
+        println(sut1.toString())
+        println(sut2.toString())
+        assertTrue( sut1 == sut2 )
+        // a == b  ->  a.equals(b)
+        assertTrue( sut1 == sut1 )
+        assertFalse( sut1.equals("ISEL") )
+        assertFalse( sut1 == null )
+    }
+    @Test
+    fun `relative comparation in two dates`() {
+        val sut1 = Date(2024,9,20)
+        val sut2 = Date(2024,9,25)
+        assertTrue( sut2 > sut1 )
+        // a > b  -->  a.compareTo(b) > 0
+        // a <= b  -->  a.compareTo(b) <= 0
+    }
+    @Test
+    fun `convert date to string`() {
+        val sut = Date(2024,9,2)
+        assertEquals("2024-09-02",sut.toString())
+        println(sut)
     }
 }
