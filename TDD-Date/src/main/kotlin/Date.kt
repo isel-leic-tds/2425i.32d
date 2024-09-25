@@ -5,18 +5,26 @@ private val daysOfMonth = listOf(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 private const val FEB_LEAP_YEAR_DAYS = 29
 private val MAX_MONTH = daysOfMonth.size
 
-class Date(val year: Int, val month: Int = 1, val day: Int = 1) : Any() {
-    init {
-        require(year in START_YEAR_GREGORIAN..MAX_YEAR) { "Illegal year $year" }
-        require(month in 1..MAX_MONTH) { "Illegal month $month"}
-        require(day in 1..lastDayOfMonth) { "Illegal day $day" }
-    }
-    override fun equals(other: Any?) =
-        this===other ||
-        other is Date && year==other.year && month==other.month && day==other.day
+const val YEAR_BITS = 12
+const val MONTH_BITS = 4
+const val DAY_BITS = 5
 
-    override fun hashCode() = day + (month + year*13)*31
+@JvmInline
+value class Date private constructor(val bits: Int) {
+    constructor(y: Int, m: Int = 1, d: Int = 1) :this(
+        d or (m shl DAY_BITS) or (y shl (DAY_BITS+MONTH_BITS))
+    ) {
+        require(y in START_YEAR_GREGORIAN..MAX_YEAR) { "Illegal year $y" }
+        require(m in 1..MAX_MONTH) { "Illegal month $m"}
+        require(d in 1..lastDayOfMonth) { "Illegal day $d" }
+    }
+    val year get() = bits shr (DAY_BITS+MONTH_BITS)
+    val month get() = (bits shr DAY_BITS) and (1 shl MONTH_BITS)-1
+    val day get() = bits and (1 shl DAY_BITS)-1
+
     override fun toString() = "%4d-%02d-%02d".format(year,month,day)
+
+    operator fun compareTo(d: Date): Int = bits-d.bits
 }
 
 val Date.isLeapYear get() = year.isLeapYear
@@ -37,10 +45,4 @@ tailrec fun Date.addDays(days: Int): Date {
     else
         (if (month!=MAX_MONTH) Date(year,month+1) else Date(year+1))
         .addDays(d-lastDayOfMonth-1)
-}
-
-operator fun Date.compareTo(d: Date): Int = when {
-    year != d.year -> year - d.year
-    month != d.month -> month -d.month
-    else -> day - d.day
 }
