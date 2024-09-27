@@ -7,4 +7,7 @@ class MutableStack<T> {
     fun pop(): T = elems.removeLast()
     fun isEmpty() = elems.isEmpty()
     val top: T get() = elems.last()
+    override fun equals(other: Any?) =
+        other is MutableStack<*> && elems==other.elems
+    override fun hashCode() = elems.hashCode()
 }
