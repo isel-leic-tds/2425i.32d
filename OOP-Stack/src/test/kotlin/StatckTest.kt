@@ -1,5 +1,5 @@
 import kotlin.test.*
-import linkedlist.*
+import oop.*
 
 class StatckTest {
     @Test
@@ -20,15 +20,15 @@ class StatckTest {
     fun `using three stacks`() {
         val s1 = Stack<Int>()
         val s2 = s1.push(27)
-        val s3 = s1.push(5)
+        val s3 = s2.push(5)
         assertTrue(s1.isEmpty())
         assertEquals(27,s2.top)
         assertEquals(5,s3.top)
         val s4 = s3.pop()
         assertEquals(27,s4.top)
-        val (top, s5) = s3.pop2()
-        assertEquals(5,top)
-        assertEquals(27,s5.top)
+        //val (top, s5) = s3.pop2()
+        //assertEquals(5,top)
+        //assertEquals(27,s5.top)
     }
     @Test fun `iterate over stack`() {
         val sut = Stack<Char>().push('A').push('B')
@@ -42,8 +42,17 @@ class StatckTest {
         //     val e = it.next()
         //     action(e)
     }
-    @Test fun companionTest() {
-        assertEquals("Stack",Stack.name)
-        assertEquals(42,Stack.fx())
+    @Test fun equality() {
+        val sut1 = Stack<Int>().push(27).push(10)
+        val sut2 = Stack<Int>().push(27).push(10)
+        assertEquals(sut1,sut2)
+        assertEquals(sut1.hashCode(),sut2.hashCode())
+        val se1 = Stack<Char>()
+        val se2 = Stack<Char>()
+        assertEquals(se1,se2)
+        assertEquals(se1.hashCode(),se2.hashCode())
+    }
+    @Test fun `Stack with elements`() {
+        //val sut = stackOf(2,5,27,10)
     }
 }

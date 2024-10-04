@@ -1,0 +1,26 @@
+@startuml
+
+interface Iterable<T> {
+    iterator(): Iterator<T>
+}
+
+interface Stack<T> {
+    push(e: T): Stack<T>
+    pop(): Stack<T>
+    top: T
+    isEmpty(): Boolean
+}
+
+class StackEmpty<T>
+class StackNotEmpty<T>
+class Node<T> {
+    elem: T
+}
+Node "?" <-- Node : next
+Node <-- StackNotEmpty : head
+
+Stack <|.. StackEmpty
+Stack <|.. StackNotEmpty
+Iterable <|- Stack
+
+@enduml
