@@ -1,9 +1,11 @@
 @startuml
 
+hide empty members
+'hide circle
+
 interface Iterable<T> {
     iterator(): Iterator<T>
 }
-
 interface Stack<T> {
     push(e: T): Stack<T>
     pop(): Stack<T>
@@ -11,7 +13,7 @@ interface Stack<T> {
     isEmpty(): Boolean
 }
 
-class StackEmpty<T>
+class StackEmpty <<(O,#FF7700)>>
 class StackNotEmpty<T>
 class Node<T> {
     elem: T
@@ -19,8 +21,7 @@ class Node<T> {
 Node "?" <-- Node : next
 Node <-- StackNotEmpty : head
 
-Stack <|.. StackEmpty
+Stack <|.. StackEmpty : T=Any
 Stack <|.. StackNotEmpty
 Iterable <|- Stack
-
 @enduml

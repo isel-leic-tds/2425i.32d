@@ -2,8 +2,7 @@ import kotlin.test.*
 import oop.*
 
 class StatckTest {
-    @Test
-    fun basicTest() {
+    @Test fun basicTest() {
         val sut = Stack<Int>().push(27).push(10)
         assertFalse(sut.isEmpty())
         assertEquals(10,sut.top)
@@ -16,8 +15,7 @@ class StatckTest {
         assertFalse(sut.isEmpty())
         assertEquals(10,sut.top)
     }
-    @Test
-    fun `using three stacks`() {
+    @Test fun `using three stacks`() {
         val s1 = Stack<Int>()
         val s2 = s1.push(27)
         val s3 = s2.push(5)
@@ -53,6 +51,15 @@ class StatckTest {
         assertEquals(se1.hashCode(),se2.hashCode())
     }
     @Test fun `Stack with elements`() {
-        //val sut = stackOf(2,5,27,10)
+        val sut = stackOf(2,5,27,10)
+        assertEquals(10,sut.top)
+        val se = stackOf<Int>()
+        assertTrue(se.isEmpty())
+        val sut1 = Stack(10) { 'A'+it }
+        assertEquals('A'+9,sut1.top)
+    }
+    @Test fun `Stack toString()`() {
+        val sut = stackOf(1,2,7)
+        assertEquals("[7, 2, 1]",sut.toString())
     }
 }
