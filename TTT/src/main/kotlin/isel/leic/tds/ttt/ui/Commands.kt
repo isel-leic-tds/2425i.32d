@@ -10,17 +10,17 @@ object PlayCommand: Command("<position>") {
     override fun execute(args: List<String>, board: Board?): Board {
         checkNotNull(board) { "No board to play" }
         require(args.isNotEmpty()) { "Missing position" }
-        val pos = requireNotNull(args[0].toIntOrNull()) { "Illegal position ${args[0]}"}
+        val pos = requireNotNull(args[0].toPositionOrNull()) { "Illegal position ${args[0]}"}
         return board.play(pos)
     }
 }
 
-fun getCommands(): Map<String,Command> = mapOf(
+fun getCommands() = mapOf(
     "EXIT" to object :Command() {
         override val isTerminate: Boolean get() = true
     },
     "NEW" to object :Command() {
-        override fun execute(args: List<String>, board: Board?) = Board('X')
+        override fun execute(args: List<String>, board: Board?) = Board(Player.X)
     },
     "PLAY" to PlayCommand
 )

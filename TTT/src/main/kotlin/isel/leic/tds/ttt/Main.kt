@@ -4,7 +4,7 @@ import isel.leic.tds.ttt.ui.*
 
 fun main() {
     var board: Board? = null
-    val cmds:Map<String, Command> = getCommands()
+    val cmds = getCommands()
     while (true) {
         val (name, args) = readCommand()
         val cmd = cmds[name]
