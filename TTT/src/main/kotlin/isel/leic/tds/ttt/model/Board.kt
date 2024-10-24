@@ -1,25 +1,47 @@
 package isel.leic.tds.ttt.model
 
-const val BOARD_DIM = 3
+const val BOARD_DIM = 2
 const val BOARD_CELLS = BOARD_DIM* BOARD_DIM
+
+typealias Moves = Map<Position,Player>
+
+// States of Board (Run,Win,Draw)
+/*
+abstract class Board(val moves: Moves)
+class BoardRun(val turn: Player, moves: Moves): Board(moves)
+class BoardWin(val winner: Player, moves: Moves): Board(moves)
+class BoardDraw(moves: Moves): Board(moves)
+*/
 
 class Board(
     val turn: Player = Player.X,
-    val moves: List<Player?> = List(BOARD_CELLS) { null }
+    val moves: List<Player?> = List(BOARD_CELLS) { null },
+    val winner: Player? = null
 )
 
+operator fun Board.get(p: Position) = moves[p.index]
+
 fun Board.play(pos: Position): Board {
-    check(moves[pos.index]==null) { "Position $pos is already used" }
+    require(moves[pos.index]==null) { "Position $pos is already used" }
+    check(winner==null) { "Game over" }
+    val movesAfter = moves.mapIndexed { idx, p -> if (idx == pos.index) turn else p }
     return Board(
         turn = turn.other,
-        moves = moves.mapIndexed { idx, p -> if (idx == pos.index) turn else p }
+        moves = movesAfter,
+        winner = winnerIn(pos, movesAfter)
     )
 }
 
-fun Board.isWinner(p: Player) =
-    (0..6 step 3).any{ line -> (0..2).all{ moves[line+it]==p } } ||
-    (0..2).any { col -> (0..6 step 3).all{ moves[col+it]==p } } ||
-    (0..8 step 4).all{ moves[it]==p } ||
-    (2..6 step 2).all{ moves[it]==p }
+private fun winnerIn(p: Position, moves: List<Player?>): Player? {
+    val player = checkNotNull(moves[p.index])
+    val places = Position.values.filter { moves[it.index] == player }
+    if (places.size < BOARD_DIM) return null
+    return player.takeIf {
+        places.count { it.row == p.row } == BOARD_DIM ||
+        places.count { it.col == p.col } == BOARD_DIM ||
+        p.slash && places.count { it.slash } == BOARD_DIM ||
+        p.backSlash && places.count { it.backSlash } == BOARD_DIM
+    }
+}
 
-fun Board.isDraw() = moves.none { it == null }
+fun Board.isDraw() = winner==null && moves.none { it == null }

@@ -13,12 +13,12 @@ value class Position private constructor(val index: Int) {
         val values = List(BOARD_CELLS) { Position(it) }
         operator fun invoke(idx: Int) = values[idx]
     }
+
+    override fun toString() = index.toString()
 }
 
-fun String.toPositionOrNull(): Position? {
-    val idx = this.toIntOrNull() ?: return null
-    return if (idx in Position.values.indices) Position(idx) else null
-}
+fun String.toPositionOrNull(): Position? =
+    toIntOrNull()?.let { idx -> Position.values.getOrNull(idx) }
 
 
 

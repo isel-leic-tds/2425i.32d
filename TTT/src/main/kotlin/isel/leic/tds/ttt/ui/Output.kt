@@ -1,18 +1,21 @@
 package isel.leic.tds.ttt.ui
 import isel.leic.tds.ttt.model.*
 
+private val sepLine = "---" + "+---".repeat(BOARD_DIM-1)
+
 fun Board.show() {
-    repeat(3) { line ->
-        println( moves.subList(line*3,line*3+3).joinToString(" | "," "," "){
-            it?.toString() ?: " "
-        })
-        if (line < 2) println("---+---+---")
+    Position.values.forEach { pos ->
+        print(" ${this[pos]?:" "} ")
+        if (pos.col< BOARD_DIM-1) print('|')
+        else {
+            println()
+            if (pos.row< BOARD_DIM-1) println(sepLine)
+        }
     }
-    when {
-        isWinner(Player.X) -> println("Winner: X")
-        isWinner(Player.O) -> println("winner: O")
-        isDraw() -> println("Draw")
-        else -> println("Turn: $turn")
-    }
+    println( when {
+        winner!=null -> "Winner: $winner"
+        isDraw() -> "Draw"
+        else -> "Turn: $turn"
+    } )
 }
 
