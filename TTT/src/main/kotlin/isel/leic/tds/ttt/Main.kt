@@ -3,16 +3,16 @@ import isel.leic.tds.ttt.model.*
 import isel.leic.tds.ttt.ui.*
 
 fun main() {
-    var board: Board? = null
+    var game = Game()
     val cmds = getCommands()
     while (true) {
         val (name, args) = readCommand()
         val cmd = cmds[name]
         if (cmd==null) println("Invalid command $name")
         else try {
-            board = cmd.execute(args, board)
+            game = cmd.execute(args, game)
             if (cmd.isTerminate) break
-            board?.show()
+            game.show()
         } catch (e : IllegalArgumentException) {
             println("${e.message}. Use: $name ${cmd.syntax}")
         } catch (e : IllegalStateException) {

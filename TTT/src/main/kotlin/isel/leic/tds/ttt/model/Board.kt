@@ -1,40 +1,38 @@
 package isel.leic.tds.ttt.model
 
-const val BOARD_DIM = 2
+const val BOARD_DIM = 3
 const val BOARD_CELLS = BOARD_DIM* BOARD_DIM
 
 typealias Moves = Map<Position,Player>
 
-// States of Board (Run,Win,Draw)
-/*
-abstract class Board(val moves: Moves)
+sealed class Board(val moves: Moves)
 class BoardRun(val turn: Player, moves: Moves): Board(moves)
 class BoardWin(val winner: Player, moves: Moves): Board(moves)
 class BoardDraw(moves: Moves): Board(moves)
-*/
 
-class Board(
-    val turn: Player = Player.X,
-    val moves: List<Player?> = List(BOARD_CELLS) { null },
-    val winner: Player? = null
-)
+fun Board(turn: Player= Player.X): Board = BoardRun(turn, emptyMap())
 
-operator fun Board.get(p: Position) = moves[p.index]
+operator fun Board.get(p: Position) = moves[p]
 
 fun Board.play(pos: Position): Board {
-    require(moves[pos.index]==null) { "Position $pos is already used" }
-    check(winner==null) { "Game over" }
-    val movesAfter = moves.mapIndexed { idx, p -> if (idx == pos.index) turn else p }
-    return Board(
-        turn = turn.other,
-        moves = movesAfter,
-        winner = winnerIn(pos, movesAfter)
-    )
+    require(pos !in moves) { "Position $pos is already used" }
+    when(this) {
+        is BoardWin, is BoardDraw -> error("Game over")
+        is BoardRun -> {
+            val movesAfter = moves + (pos to turn)
+            val winner = winnerIn(pos, movesAfter)
+            return when {
+                winner!=null -> BoardWin(turn, movesAfter)
+                movesAfter.size == BOARD_CELLS -> BoardDraw(movesAfter)
+                else -> BoardRun(turn.other, movesAfter)
+            }
+        }
+    }
 }
 
-private fun winnerIn(p: Position, moves: List<Player?>): Player? {
-    val player = checkNotNull(moves[p.index])
-    val places = Position.values.filter { moves[it.index] == player }
+private fun winnerIn(p: Position, moves: Moves): Player? {
+    val player = checkNotNull(moves[p])
+    val places = moves.filter { it.value == player }.keys
     if (places.size < BOARD_DIM) return null
     return player.takeIf {
         places.count { it.row == p.row } == BOARD_DIM ||
@@ -43,5 +41,3 @@ private fun winnerIn(p: Position, moves: List<Player?>): Player? {
         p.backSlash && places.count { it.backSlash } == BOARD_DIM
     }
 }
-
-fun Board.isDraw() = winner==null && moves.none { it == null }

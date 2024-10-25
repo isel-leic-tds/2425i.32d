@@ -1,6 +1,14 @@
 package isel.leic.tds.ttt.ui
 import isel.leic.tds.ttt.model.*
 
+fun Game.show() = board?.show()
+
+fun Game.showScore() {
+    (Player.entries+null).forEach { player ->
+        println("${player?:"Draw"} = ${score[player]}")
+    }
+}
+
 private val sepLine = "---" + "+---".repeat(BOARD_DIM-1)
 
 fun Board.show() {
@@ -12,10 +20,10 @@ fun Board.show() {
             if (pos.row< BOARD_DIM-1) println(sepLine)
         }
     }
-    println( when {
-        winner!=null -> "Winner: $winner"
-        isDraw() -> "Draw"
-        else -> "Turn: $turn"
+    println( when(this) {
+        is BoardWin -> "Winner: $winner"
+        is BoardDraw -> "Draw"
+        is BoardRun -> "Turn: $turn"
     } )
 }
 

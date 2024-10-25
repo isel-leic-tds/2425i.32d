@@ -1,0 +1,42 @@
+@startuml
+
+hide empty members
+
+enum Player {
+    X,O
+}
+
+class Position {
+    index: Int
+}
+
+/'
+Board --> "0..9" Player : moves
+Board --> Player : "turn       "
+Board --> "?" Player : winner
+Board ..> Position : <<use>>
+'/
+
+abstract class Board <<sealed>>
+Board <|-- BoardRun
+Board <|-- BoardWin
+Board <|-- BoardDraw
+
+<> Moves
+Board *-> "*" Moves : "moves"
+Position <-down- Moves : key
+Moves -> Player : value
+BoardRun -up-> Player : "turn       "
+BoardWin -up-> Player : winner
+
+
+Game *--> "?" Board: board
+Game -> Player : firstPlayer
+
+<> Score
+Game *--> "3..*" Score : score
+Score --> Int : value
+Score -> "?" Player : key
+
+
+@enduml
