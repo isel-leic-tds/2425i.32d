@@ -6,15 +6,14 @@ skinparam componentStyle rectangle
 
 package ui {
   [Input]
-  [Output]
-  [Commands]
+  [Commands] ..> [Output]
 }
 
 package model {
-  [Game]
-  [Board]
-  [Player]
-  [Position]
+  [Game] ..> [Board]
+  [Board] ..> [Player]
+  [Board] ..> [Position]
+  [Game] ..> [Player]
 }
 
 
@@ -23,19 +22,19 @@ package model {
 
 
 
-[Main] -[hidden]- ui
-ui -[hidden]- model
+'[Main] -[hidden]- ui
+'ui -[hidden]- model
 
 
 
 
-/' Relações de Acoplamento
+' Relações de Acoplamento
 [Main] --> [Input]
 [Main] --> [Commands]
 [Main] --> [Game]
 [Commands] -> [Game]
 [Output] -up-> [Game]
 [Output] -> [Board]
-´/
+
 
 @enduml
