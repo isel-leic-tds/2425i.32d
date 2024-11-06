@@ -1,6 +1,12 @@
 package isel.leic.tds.ttt.ui
 import isel.leic.tds.ttt.model.*
 
+fun Clash.show() {
+    val clash = this as? ClashRun ?: return
+    println("Clash: ${clash.name} you are ${clash.sidePlayer}")
+    clash.game.show()
+}
+
 fun Game.show() = board?.show()
 
 fun Game.showScore() {

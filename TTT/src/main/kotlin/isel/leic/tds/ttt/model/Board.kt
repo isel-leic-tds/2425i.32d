@@ -1,14 +1,51 @@
 package isel.leic.tds.ttt.model
 
+import isel.leic.tds.storage.Serializer
+
 const val BOARD_DIM = 3
 const val BOARD_CELLS = BOARD_DIM* BOARD_DIM
 
 typealias Moves = Map<Position,Player>
 
-sealed class Board(val moves: Moves)
+sealed class Board(val moves: Moves) {
+    override fun equals(other: Any?) = other is Board && moves == other.moves
+    override fun hashCode() = moves.hashCode()
+}
 class BoardRun(val turn: Player, moves: Moves): Board(moves)
 class BoardWin(val winner: Player, moves: Moves): Board(moves)
 class BoardDraw(moves: Moves): Board(moves)
+
+// TODO: Add BoardSerializer
+// Format examples:
+//    "RUN X | 4:X 0:O 5:X 1:O"
+//    "WIN O | 4:X 0:O 5:X 1:O 6:O 2:X 7:O 3:X 8:O"
+//    "DRAW  | 4:X 0:O 5:X 1:O 6:O 2:X 7:X 3:O 8:X"
+object BoardSerializer: Serializer<Board> {
+    override fun serialize(data: Board): String {
+        val moves = data.moves.map { "${it.key}:${it.value}" }.joinToString(" ")
+        return when(data) {
+            is BoardRun -> "RUN ${data.turn}"
+            is BoardWin -> "WIN ${data.winner}"
+            is BoardDraw -> "DRAW "
+        } + " | $moves"
+    }
+    override fun deserialize(text: String): Board {
+        val (state, plays) = text.split(" | ")
+        val (type, player) = state.split(" ")
+        val moves = if (plays.isEmpty()) emptyMap()
+            else plays.split(" ").associate {
+                val (pos, ply) = it.split(":")
+                Position(pos.toInt()) to Player.valueOf(ply)
+            }
+        return when(type) {
+            "RUN" -> BoardRun(Player.valueOf(player), moves)
+            "WIN" -> BoardWin(Player.valueOf(player), moves)
+            "DRAW" -> BoardDraw(moves)
+            else -> error("Invalid state $type")
+        }
+    }
+}
+
 
 fun Board(turn: Player= Player.X): Board = BoardRun(turn, emptyMap())
 

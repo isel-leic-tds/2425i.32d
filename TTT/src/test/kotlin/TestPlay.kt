@@ -3,7 +3,7 @@ import isel.leic.tds.ttt.model.*
 import isel.leic.tds.ttt.ui.show
 
 // All tests assume BOARD_DIM = 3
-private fun playSequence(vararg moves: Int): Board =
+fun playSequence(vararg moves: Int): Board =
     moves.fold(Board()) { b, idx -> b.play(Position(idx))}
 
 class TestPlay {
