@@ -1,0 +1,48 @@
+@startuml
+
+hide empty members
+
+enum Player {
+    X,O
+}
+
+class Position <<value>>{
+    index: Int
+}
+
+abstract class Board <<sealed>>
+Board <|-- BoardRun
+Board <|-- BoardWin
+Board <|-- BoardDraw
+
+<> Moves
+Board *-> "*" Moves : "moves"
+Position <-up- Moves : key
+Moves -> Player : value
+BoardRun -up-> Player : "turn       "
+BoardWin -up-> Player : winner
+
+Game *--> "?" Board: board
+Game -> Player : firstPlayer
+
+'<> Score
+'Game *--> "3..*" Score : score
+'Score --> Int : value
+'Score -> "?" Player : key
+class Game {
+  score: Map<Player,Int>
+}
+
+Clash *-right-> GameStorage : storage
+Clash <|-- ClashRun
+ClashRun --> Player : sidePlayer
+ClashRun *-right-> Game : game
+ClashRun *-left-> Name : id
+class Name <<value>>{
+  value: String
+}
+
+interface Storage<K,D>
+Storage <|-left- GameStorage : K=Name\nD=Board
+hide GameStorage circle
+@enduml

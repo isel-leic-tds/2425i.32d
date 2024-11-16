@@ -1,0 +1,40 @@
+@startuml
+
+skinparam componentStyle rectangle
+
+[Main]
+
+package ui {
+  [Input]
+  [Commands] ..> [Output]
+}
+
+package model {
+  [Game] ..> [Board]
+  [Board] ..> [Player]
+  [Board] ..> [Position]
+  [Game] ..> [Player]
+}
+
+
+
+
+
+
+
+'[Main] -[hidden]- ui
+'ui -[hidden]- model
+
+
+
+
+' Relações de Acoplamento
+[Main] --> [Input]
+[Main] --> [Commands]
+[Main] --> [Game]
+[Commands] -> [Game]
+[Output] -up-> [Game]
+[Output] -> [Board]
+
+
+@enduml
