@@ -3,10 +3,8 @@ package isel.leic.tds.ttt.ui
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -20,21 +18,20 @@ val LINE_WIDTH = 10.dp
 val GRID_SIDE = CELL_SIDE * BOARD_DIM + LINE_WIDTH * (BOARD_DIM-1)
 
 @Composable
-fun Grid(board: Board, onClickCell: (Position)->Unit ) {
+fun Grid(board: Board?, onClickCell: (Position)->Unit ) {
     Column(
-        modifier = Modifier.size(GRID_SIDE).background(Color.Black),
-        verticalArrangement = Arrangement.SpaceBetween
+        Modifier.size(GRID_SIDE).background(Color.Black),
+        Arrangement.SpaceBetween
     ) {
         repeat(BOARD_DIM) { row ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                Modifier.fillMaxWidth(),
+                Arrangement.SpaceBetween
             ) {
                 repeat(BOARD_DIM) { col ->
                     val pos = Position(row * BOARD_DIM + col)
-                    val player = board.moves[pos]
                     Player(
-                        player,
+                        player = board?.let { it.moves[pos] },
                         Modifier.size(CELL_SIDE).background(Color.White),
                         onClick = { onClickCell(pos) }
                     )

@@ -3,11 +3,15 @@ package isel.leic.tds.ttt.model
 import isel.leic.tds.storage.Storage
 
 @JvmInline
-value class Name(val value: String) {
+value class Name(private val value: String) {
     init {
-        require(value.isNotEmpty() && value.all { it.isLetterOrDigit() }) { "Name not valid" }
+        require(isValid(value)) { "Name not valid" }
     }
     override fun toString() = value
+    companion object {
+        fun isValid(txt: String) =
+            txt.isNotEmpty() && txt.all { it.isLetterOrDigit() }
+    }
 }
 
 typealias GameStorage = Storage<Name, Game>
