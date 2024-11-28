@@ -2,6 +2,7 @@ package isel.leic.tds.ttt.ui
 
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -11,10 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import isel.leic.tds.ttt.model.Name
-
-enum class Action(val text: String){
-    START("Start"), JOIN("Join")
-}
 
 @Composable
 fun ClashNameEdit(
@@ -38,7 +35,10 @@ fun ClashNameEdit(
             TextButton(onClick = onCancel) { Text("Cancel") }
         },
         text = {
-            TextField(name, onValueChange = { name = it })
+            OutlinedTextField(name,
+                onValueChange = { name = it },
+                label = { Text("Name") }
+            )
         }
     )
 }

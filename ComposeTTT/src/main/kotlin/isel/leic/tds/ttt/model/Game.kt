@@ -10,7 +10,6 @@ data class Game(
     val score: Score = (Player.entries+null).associateWith { 0 }
 )
 
-// TODO: Add GameSerializer
 // Format: <firstPlayer> # <score> # <board>
 // Example: "X # X:2 O:1 null:4 # RUN X | 4:X 0:O 5:X 1:O"
 object GameSerializer: Serializer<Game> {

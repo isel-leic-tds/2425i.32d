@@ -15,7 +15,6 @@ class BoardRun(val turn: Player, moves: Moves): Board(moves)
 class BoardWin(val winner: Player, moves: Moves): Board(moves)
 class BoardDraw(moves: Moves): Board(moves)
 
-// TODO: Add BoardSerializer
 // Format examples:
 //    "RUN X | 4:X 0:O 5:X 1:O"
 //    "WIN O | 4:X 0:O 5:X 1:O 6:O 2:X 7:O 3:X 8:O"

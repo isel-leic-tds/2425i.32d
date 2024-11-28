@@ -12,8 +12,9 @@ import isel.leic.tds.ttt.ui.*
 @Composable
 fun FrameWindowScope.TTTMenuBar(vm: TTTViewModel, onExit: () -> Unit) = MenuBar{
     Menu("Game") {
-        Item("New board", onClick = vm::newBoard)
-        Item("Score", onClick = vm::enableScore)
+        Item("New board", enabled = vm.hasClash(), onClick = vm::newBoard)
+        Item("Refresh", enabled = vm.hasClash(), onClick = vm::refresh)
+        Item("Score", enabled = vm.hasClash(), onClick = vm::enableScore)
         Item("Exit", onClick = onExit)
     }
     Menu("Clash") {
@@ -31,11 +32,12 @@ private fun FrameWindowScope.TTTApp(onExit: ()->Unit) {
             ScoreView(vm.score, onClose = vm::disableScore)
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Grid(vm.board, onClickCell = { pos -> vm.play(pos) })
-            StatusBar(vm.board)
+            StatusBar(vm.board, vm.sidePlayer)
         }
         vm.currentAction?.let {
             ClashNameEdit(it, vm::cancelAction, vm::performAction)
         }
+        vm.message?.let { Message(it, vm::hideMessage) }
     }
 }
 
