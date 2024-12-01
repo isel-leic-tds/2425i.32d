@@ -23,15 +23,30 @@ class ClashRun(
     val name: Name, val game: Game, val sidePlayer: Player
 ) : Clash(storage)
 
+private fun Clash.deleteIfOwner() {
+    if (this is ClashRun && sidePlayer==Player.X)
+        storage.delete(name)
+}
+
 fun Clash.start(name: Name): Clash =
     ClashRun(storage, name, Game().newBoard(), Player.X)
-    .also { storage.create(name, it.game) }
+    .also {
+        deleteIfOwner()
+        storage.create(name, it.game)
+    }
 
-fun Clash.join(name: Name): Clash = ClashRun(
-    storage, name,
-    game = checkNotNull(storage.read(name)) { "Clash $name not found" },
-    sidePlayer = Player.O
-)
+class ClashNotFound(name: Name): IllegalStateException("Clash $name not found")
+
+private fun Clash.read(name: Name) =
+    storage.read(name) ?: throw ClashNotFound(name)
+
+fun Clash.join(name: Name): Clash =
+    ClashRun(storage, name, read(name), Player.O)
+        .also { deleteIfOwner() }
+
+fun Clash.exit() {
+    deleteIfOwner()
+}
 
 /**
  * Utility function to ensure the clash is a ClashRun and
@@ -43,20 +58,23 @@ private fun Clash.onClashRun(getGame: ClashRun.() -> Game): Clash {
     return ClashRun(storage, name, getGame(), sidePlayer)
 }
 
+class NoChangeException(name: Name): IllegalStateException("No changes in clash $name")
+
 fun Clash.refresh() = onClashRun {
-    checkNotNull(storage.read(name))
-    .also { check(it != game) { "No changes in clash $name" } }
+    read(name).also { if(it == game) throw NoChangeException(name) }
 }
 
 fun Clash.play(pos: Position) = onClashRun {
-    game.play(pos)
-    .also {
-        check((game.board as? BoardRun)?.turn == sidePlayer) { "Not your turn" }
-        storage.update(name, it)
-    }
+    check((game.board as? BoardRun)?.turn == sidePlayer) { "Not your turn" }
+    game.play(pos).also { storage.update(name, it) }
 }
 
 fun Clash.newBoard() = onClashRun {
-    game.newBoard()
-    .also { storage.update(name, it) }
+    game.newBoard().also { storage.update(name, it) }
 }
+
+val Clash.isSideTurn: Boolean get() = this is ClashRun &&
+    sidePlayer == when (game.board) {
+        is BoardRun -> game.board.turn
+        else -> game.firstPlayer
+    }
