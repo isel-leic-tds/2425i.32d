@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.*
+import isel.leic.tds.storage.MongoDriver
 import isel.leic.tds.ttt.ui.*
 
 @Composable
@@ -40,15 +41,19 @@ private fun FrameWindowScope.TTTApp(vm: TTTViewModel, onExit: ()->Unit) {
     }
 }
 
-fun main() = application {
-    val scope = rememberCoroutineScope()
-    val vm = remember { TTTViewModel(scope) }
-    val onExit = { vm.exit(); exitApplication() }
-    Window(
-        onCloseRequest = onExit,
-        title = "Tic Tac Toe",
-        state = rememberWindowState(size = DpSize.Unspecified)
-    ) {
-        TTTApp(vm, onExit = onExit)
+fun main() {
+    //MongoDriver("test").use { driver ->
+        application(exitProcessOnExit = false) {
+            val scope = rememberCoroutineScope()
+            val vm = remember { TTTViewModel(scope/*,driver*/) }
+            val onExit = { vm.exit(); exitApplication() }
+            Window(
+                onCloseRequest = onExit,
+                title = "Tic Tac Toe",
+                state = rememberWindowState(size = DpSize.Unspecified)
+            ) {
+                TTTApp(vm, onExit = onExit)
+            }
+      //  }
     }
 }

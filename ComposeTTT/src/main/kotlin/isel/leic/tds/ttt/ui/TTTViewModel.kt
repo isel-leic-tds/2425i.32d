@@ -1,7 +1,7 @@
 package isel.leic.tds.ttt.ui
 
 import androidx.compose.runtime.*
-import isel.leic.tds.storage.TextFileStorage
+import isel.leic.tds.storage.*
 import isel.leic.tds.ttt.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -12,9 +12,11 @@ enum class Action(val text: String){
     START("Start"), JOIN("Join")
 }
 
-class TTTViewModel(private val scope: CoroutineScope) {
+class TTTViewModel(private val scope: CoroutineScope/*, driver: MongoDriver*/) {
     // Model State
-    private val storage = TextFileStorage<Name, Game>("games", GameSerializer)
+    private val driver = MongoDriver("test")
+    private val storage = MongoStorage<Name,Game>("games", driver,GameSerializer)
+    //private val storage = TextFileStorage<Name, Game>("games", GameSerializer)
     private var clash by mutableStateOf(Clash(storage))
 
     val board: Board? get() = (clash as? ClashRun)?.game?.board
@@ -30,6 +32,7 @@ class TTTViewModel(private val scope: CoroutineScope) {
     fun exit() {
         cancelWaiting()
         clash.exit()
+        driver.close()
     }
 
     // View State
